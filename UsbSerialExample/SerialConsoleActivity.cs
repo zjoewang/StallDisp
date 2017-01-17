@@ -100,7 +100,7 @@ namespace Hoho.Android.UsbSerial.Examples
 			Log.Info (TAG, string.Format("VendorId: {0} DeviceId: {1} PortNumber: {2}", vendorId, deviceId, portNumber));
 
 			var drivers = await DeviceListActivity.FindAllDriversAsync (usbManager);
-			var driver = drivers.Where((d) => d.Device.VendorId == vendorId && d.Device.DeviceId == deviceId).LastOrDefault();
+			var driver = drivers.Where((d) => d.Device.VendorId == vendorId && d.Device.DeviceId == deviceId).FirstOrDefault();
 			if(driver == null)
 				throw new Exception ("Driver specified in extra tag not found.");
 
@@ -134,10 +134,11 @@ namespace Hoho.Android.UsbSerial.Examples
 			Log.Info (TAG, "Starting IO manager ..");
 			try {
 				serialIoManager.Open (usbManager);
+                Thread.Sleep(2000);
+                byte[] cmd = Encoding.ASCII.GetBytes("  ");
+                port.Write(cmd, 1000);
                 Thread.Sleep(1000);
-                var bytes = new byte[] { 0x20 };
-                port.Write(bytes, 1000);
-			}
+            }
 			catch (Java.IO.IOException e) {
 				titleTextView.Text = "Error opening device: " + e.Message;
 				return;
@@ -146,12 +147,12 @@ namespace Hoho.Android.UsbSerial.Examples
 
 		void UpdateReceivedData(byte[] data)
 		{
-			var message = "Read " + data.Length + " bytes: \n"
+			/*var message = "Read " + data.Length + " bytes: \n"
 				+ HexDump.DumpHexString (data) + "\n\n";
-            dumpTextView.Append(message);
-            // string result = System.Text.Encoding.UTF8.GetString(data);
+            dumpTextView.Append(message);*/
+            string result = System.Text.Encoding.UTF8.GetString(data);
 
-            dumpTextView.Append(message);
+            dumpTextView.Append(result);
 			scrollView.SmoothScrollTo(0, dumpTextView.Bottom);		
 		}
 	}
