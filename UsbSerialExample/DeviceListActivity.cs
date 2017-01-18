@@ -40,7 +40,7 @@ using System.Threading;
 
 namespace Hoho.Android.UsbSerial.Examples
 {
-	[Activity (Label = "@string/app_name", MainLauncher = true, Icon = "@drawable/icon")]
+	[Activity (Label = "@string/app_name", MainLauncher = true, Icon = "@drawable/esblogo")]
 	[IntentFilter (new[] { UsbManager.ActionUsbDeviceAttached })]
 	[MetaData (UsbManager.ActionUsbDeviceAttached, Resource = "@xml/device_filter")]
 	class DeviceListActivity : Activity
