@@ -5,13 +5,13 @@ using Android.App;
 // Information about this assembly is defined by the following attributes.
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle ("UsbSerialExample")]
-[assembly: AssemblyDescription ("")]
+[assembly: AssemblyTitle ("ESB StallBit")]
+[assembly: AssemblyDescription ("Equine SmartBits Stall Display")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("")]
-[assembly: AssemblyProduct ("")]
-[assembly: AssemblyCopyright ("Copyright 2014, LusoVU. All Rights Reserved.")]
-[assembly: AssemblyTrademark ("")]
+[assembly: AssemblyCompany ("Equine SmartBits, LLC")]
+[assembly: AssemblyProduct ("StallBit")]
+[assembly: AssemblyCopyright ("Copyright 2017, ESB. All Rights Reserved.")]
+[assembly: AssemblyTrademark ("ESB")]
 [assembly: AssemblyCulture ("")]
 
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".

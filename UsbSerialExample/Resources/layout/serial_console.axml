@@ -13,8 +13,8 @@
     <View
         android:id="@+id/separator"
         android:layout_width="match_parent"
-        android:layout_below="@+id/demoTitle"
-        android:layout_height="1dip"
+        android:layout_below="@id/demoTitle"
+        android:layout_height="wrap_content"
         android:background="#eeeeee" />
     <ScrollView
         android:id="@+id/demoScroller"
