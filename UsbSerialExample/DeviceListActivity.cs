@@ -52,6 +52,7 @@ namespace Hoho.Android.UsbSerial.Examples
 		ListView listView;
 		TextView progressBarTitle;
 		ProgressBar progressBar;
+        Button buttonChart;
 
 		UsbSerialPortAdapter adapter;
 		BroadcastReceiver detachedReceiver;
@@ -67,7 +68,8 @@ namespace Hoho.Android.UsbSerial.Examples
 			listView = FindViewById<ListView>(Resource.Id.deviceList);
 			progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar);
 			progressBarTitle = FindViewById<TextView>(Resource.Id.progressBarTitle);
-		}
+            buttonChart = FindViewById<Button>(Resource.Id.button1);
+        }
 
 		protected override async void OnResume ()
 		{
@@ -80,14 +82,22 @@ namespace Hoho.Android.UsbSerial.Examples
 				await OnItemClick(sender, e);
 			};
 
-			await PopulateListAsync();
+            buttonChart.Click += OnButtonClicked;
+
+            await PopulateListAsync();
 
 			//register the broadcast receivers
 			detachedReceiver = new UsbDeviceDetachedReceiver (this);
 			RegisterReceiver(detachedReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
 		}
 
-		protected override void OnPause ()
+        void OnButtonClicked(object sender, EventArgs e)
+        {
+            var newIntent = new Intent(this, typeof(PlotActivity));
+            StartActivity(newIntent);
+        }
+
+        protected override void OnPause ()
 		{
 			base.OnPause ();
 

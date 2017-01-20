@@ -32,4 +32,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/separator" />
+    <View
+        android:id="@+id/separator"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_below="@+id/progressBar"
+        android:layout_centerHorizontal="true"
+        android:background="#eeeeee" />
+    <Button
+        android:text="HR/%SpO2 Chart"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button1" />
 </RelativeLayout>
