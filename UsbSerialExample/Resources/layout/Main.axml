@@ -40,7 +40,7 @@
         android:layout_centerHorizontal="true"
         android:background="#eeeeee" />
     <Button
-        android:text="HR/%SpO2 Chart"
+        android:text="Biometric Charting"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/button1" />
