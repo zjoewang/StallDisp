@@ -37,12 +37,12 @@ using Hoho.Android.UsbSerial.Driver;
 using Hoho.Android.UsbSerial.Util;
 using System.Threading;
 
-namespace Hoho.Android.UsbSerial.Examples
+namespace ESB
 {
 	[Activity (Label = "@string/app_name", LaunchMode = LaunchMode.SingleTop)]			
-	class SerialConsoleActivity : Activity
+	class DataViewActivity : Activity
 	{
-		static readonly string TAG = typeof(SerialConsoleActivity).Name;
+		static readonly string TAG = typeof(LogViewActivity).Name;
 
 		public const string EXTRA_TAG = "PortInfo";
 
@@ -61,7 +61,7 @@ namespace Hoho.Android.UsbSerial.Examples
 
 			base.OnCreate (bundle);
 
-			SetContentView (Resource.Layout.serial_console);
+			SetContentView (Resource.Layout.LogView);
 
 			usbManager = GetSystemService(Context.UsbService) as UsbManager;
 			titleTextView = FindViewById<TextView>(Resource.Id.demoTitle);
@@ -99,7 +99,7 @@ namespace Hoho.Android.UsbSerial.Examples
 
 			Log.Info (TAG, string.Format("VendorId: {0} DeviceId: {1} PortNumber: {2}", vendorId, deviceId, portNumber));
 
-			var drivers = await DeviceListActivity.FindAllDriversAsync (usbManager);
+			var drivers = await MainActivity.FindAllDriversAsync (usbManager);
 			var driver = drivers.Where((d) => d.Device.VendorId == vendorId && d.Device.DeviceId == deviceId).FirstOrDefault();
 			if(driver == null)
 				throw new Exception ("Driver specified in extra tag not found.");
@@ -126,7 +126,7 @@ namespace Hoho.Android.UsbSerial.Examples
 			};
 			serialIoManager.ErrorReceived += (sender, e) => {
 				RunOnUiThread (() => {
-					var intent = new Intent(this, typeof(DeviceListActivity));
+					var intent = new Intent(this, typeof(MainActivity));
 					StartActivity(intent);
 				});
 			};

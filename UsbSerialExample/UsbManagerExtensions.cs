@@ -27,7 +27,7 @@ using Android.Content;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Hoho.Android.UsbSerial.Util
+namespace ESB
 {
 	public static class UsbManagerExtensions
 	{

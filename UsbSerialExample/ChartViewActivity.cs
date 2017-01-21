@@ -11,10 +11,10 @@ using OxyPlot.Xamarin.Android;
 using Android.Content.PM;
 using Android.Graphics;
 
-namespace Hoho.Android.UsbSerial.Examples
+namespace ESB
 {
     [Activity(Label = "@string/app_name", LaunchMode = LaunchMode.SingleTop)]
-    public class PlotActivity : Activity
+    public class ChartViewActivity : Activity
     {
         private PlotView plotViewModel;
         private LinearLayout mLLayoutModel;
@@ -30,7 +30,7 @@ namespace Hoho.Android.UsbSerial.Examples
             base.OnCreate(bundle);
 
             // Set our view from the "main" layout resource
-            SetContentView(Resource.Layout.oxyplot);
+            SetContentView(Resource.Layout.ChartView);
 
             plotViewModel = FindViewById<PlotView>(Resource.Id.plotViewModel);
             mLLayoutModel = FindViewById<LinearLayout>(Resource.Id.linearLayoutModel);

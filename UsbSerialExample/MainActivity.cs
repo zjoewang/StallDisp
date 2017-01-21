@@ -38,23 +38,24 @@ using System.Threading;
 
 [assembly: UsesFeature ("android.hardware.usb.host")]
 
-namespace Hoho.Android.UsbSerial.Examples
+namespace ESB
 {
 	[Activity (Label = "@string/app_name", MainLauncher = true, Icon = "@drawable/esblogo")]
 	[IntentFilter (new[] { UsbManager.ActionUsbDeviceAttached })]
 	[MetaData (UsbManager.ActionUsbDeviceAttached, Resource = "@xml/device_filter")]
-	class DeviceListActivity : Activity
+	class MainActivity : Activity
 	{
-		static readonly string TAG = typeof(DeviceListActivity).Name;
+		static readonly string TAG = typeof(MainActivity).Name;
 		const string ACTION_USB_PERMISSION = "com.hoho.android.usbserial.examples.USB_PERMISSION";
 
 		UsbManager usbManager;
 		ListView listView;
 		TextView progressBarTitle;
 		ProgressBar progressBar;
+        Button buttonData;
         Button buttonChart;
 
-		UsbSerialPortAdapter adapter;
+        UsbSerialPortAdapter adapter;
 		BroadcastReceiver detachedReceiver;
 		IUsbSerialPort selectedPort;
 
@@ -68,7 +69,8 @@ namespace Hoho.Android.UsbSerial.Examples
 			listView = FindViewById<ListView>(Resource.Id.deviceList);
 			progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar);
 			progressBarTitle = FindViewById<TextView>(Resource.Id.progressBarTitle);
-            buttonChart = FindViewById<Button>(Resource.Id.button1);
+            buttonData = FindViewById<Button>(Resource.Id.button1);
+            buttonChart = FindViewById<Button>(Resource.Id.button2);
         }
 
 		protected override async void OnResume ()
@@ -82,7 +84,8 @@ namespace Hoho.Android.UsbSerial.Examples
 				await OnItemClick(sender, e);
 			};
 
-            buttonChart.Click += OnButtonClicked;
+            buttonData.Click += OnButtonDataClicked;
+            buttonChart.Click += OnButtonChartClicked;
 
             await PopulateListAsync();
 
@@ -91,9 +94,15 @@ namespace Hoho.Android.UsbSerial.Examples
 			RegisterReceiver(detachedReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
 		}
 
-        void OnButtonClicked(object sender, EventArgs e)
+        void OnButtonDataClicked(object sender, EventArgs e)
         {
-            var newIntent = new Intent(this, typeof(PlotActivity));
+            var newIntent = new Intent(this, typeof(ChartViewActivity));
+            StartActivity(newIntent);
+        }
+
+        void OnButtonChartClicked(object sender, EventArgs e)
+        {
+            var newIntent = new Intent(this, typeof(ChartViewActivity));
             StartActivity(newIntent);
         }
 
@@ -140,8 +149,8 @@ namespace Hoho.Android.UsbSerial.Examples
 			var permissionGranted = await usbManager.RequestPermissionAsync(selectedPort.Driver.Device, this);
 			if(permissionGranted) {
 				// start the SerialConsoleActivity for this device
-				var newIntent = new Intent (this, typeof(SerialConsoleActivity));
-				newIntent.PutExtra (SerialConsoleActivity.EXTRA_TAG, new UsbSerialPortInfo(selectedPort));
+				var newIntent = new Intent (this, typeof(LogViewActivity));
+				newIntent.PutExtra (LogViewActivity.EXTRA_TAG, new UsbSerialPortInfo(selectedPort));
 				StartActivity (newIntent);
 			}
 		}
@@ -166,6 +175,17 @@ namespace Hoho.Android.UsbSerial.Examples
 			progressBarTitle.Text = string.Format("{0} device{1} found", adapter.Count, adapter.Count == 1 ? string.Empty : "s");
 			HideProgressBar();
 			Log.Info(TAG, "Done refreshing, " + adapter.Count + " entries found.");
+
+            if (adapter.Count == 1)
+            {
+                buttonData.Enabled = true;
+                buttonChart.Enabled = true;
+            }
+            else
+            {
+                buttonData.Enabled = false;
+                buttonChart.Enabled = false;
+            }
 		}
 
 		void ShowProgressBar()
@@ -220,9 +240,9 @@ namespace Hoho.Android.UsbSerial.Examples
 			: BroadcastReceiver
 		{
 			readonly string TAG = typeof(UsbDeviceDetachedReceiver).Name;
-			readonly DeviceListActivity activity;
+			readonly MainActivity activity;
 
-			public UsbDeviceDetachedReceiver(DeviceListActivity activity)
+			public UsbDeviceDetachedReceiver(MainActivity activity)
 			{
 				this.activity = activity;
 			}
