@@ -3,29 +3,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
-        android:id="@+id/demoTitle"
+        android:id="@+id/hr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:text="@string/app_name"
-        android:textSize="24sp"
+        android:text="HR: "
+        android:textSize="36sp"
         android:textStyle="bold" />
     <View
-        android:id="@+id/separator"
+        android:id="@+id/separator1"
         android:layout_width="match_parent"
-        android:layout_below="@id/demoTitle"
-        android:layout_height="wrap_content"
+        android:layout_height="1dip"
+        android:layout_below="@id/hr"
+        android:layout_centerHorizontal="true"
         android:background="#eeeeee" />
-    <ScrollView
-        android:id="@+id/demoScroller"
+    <TextView
+        android:id="@+id/sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/separator">
-        <TextView
-            android:id="@+id/consoleText"
-            android:textIsSelectable="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:typeface="monospace" />
-    </ScrollView>
+        android:layout_below="@id/separator1"
+        android:text="SpO2: "
+        android:textSize="36sp"
+        android:textStyle="bold" />
+    <View
+        android:id="@+id/separator2"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_below="@id/sp"
+        android:layout_centerHorizontal="true"
+        android:background="#eeeeee" />
+    <TextView
+        android:id="@+id/temp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/separator2"
+        android:text="Temp: "
+        android:textSize="36sp"
+        android:textStyle="bold" />
 </RelativeLayout>

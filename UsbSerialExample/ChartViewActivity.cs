@@ -1,3 +1,6 @@
+//
+// Copyright (c) 2017 Equine Smart Bits, LLC. All rights reserved
+
 using System;
 using Android.App;
 using Android.Content;
@@ -16,6 +19,10 @@ namespace ESB
     [Activity(Label = "@string/app_name", LaunchMode = LaunchMode.SingleTop)]
     public class ChartViewActivity : Activity
     {
+        static readonly string TAG = typeof(DataViewActivity).Name;
+
+        public const string EXTRA_TAG = "PortInfo";
+
         private PlotView plotViewModel;
         private LinearLayout mLLayoutModel;
         public PlotModel MyModel { get; set; }

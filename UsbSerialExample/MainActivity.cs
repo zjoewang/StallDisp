@@ -1,26 +1,7 @@
 ﻿//
-// Copyright 2014 LusoVU. All rights reserved.
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 3 of the License, or (at your option) any later version.
-// 
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-// 
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
-// USA.
-// 
-// Project home page: https://bitbucket.com/lusovu/xamarinusbserial
-// 
+// Copyright (c) 2017 Equine Smart Bits, LLC. All rights reserved
 
 using System;
-
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.App;
@@ -56,7 +37,7 @@ namespace ESB
         Button buttonChart;
 
         UsbSerialPortAdapter adapter;
-		BroadcastReceiver detachedReceiver;
+		// BroadcastReceiver detachedReceiver;
 		IUsbSerialPort selectedPort;
 
 		protected override void OnCreate (Bundle bundle)
@@ -84,26 +65,49 @@ namespace ESB
 				await OnItemClick(sender, e);
 			};
 
-            buttonData.Click += OnButtonDataClicked;
-            buttonChart.Click += OnButtonChartClicked;
+            buttonData.Click += async (sender, e) => {
+                await OnButtonDataClicked(sender, e);
+            };
+
+            buttonChart.Click += async (sender, e) => {
+                await OnButtonChartClicked(sender, e);
+            };
 
             await PopulateListAsync();
 
 			//register the broadcast receivers
-			detachedReceiver = new UsbDeviceDetachedReceiver (this);
-			RegisterReceiver(detachedReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
+			// detachedReceiver = new UsbDeviceDetachedReceiver (this);
+			// RegisterReceiver(detachedReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
 		}
 
-        void OnButtonDataClicked(object sender, EventArgs e)
+        async Task OnButtonDataClicked(object sender, EventArgs e)
         {
-            var newIntent = new Intent(this, typeof(ChartViewActivity));
-            StartActivity(newIntent);
+            // request user permisssion to connect to device
+            // NOTE: no request is shown to user if permission already granted
+            selectedPort = adapter.GetItem(0);
+            var permissionGranted = await usbManager.RequestPermissionAsync(selectedPort.Driver.Device, this);
+            if (permissionGranted)
+            {
+                // start the SerialConsoleActivity for this device
+                var intendDataView = new Intent(this, typeof(DataViewActivity));
+                intendDataView.PutExtra(DataViewActivity.EXTRA_TAG, new UsbSerialPortInfo(selectedPort));
+                StartActivity(intendDataView);
+            }
         }
 
-        void OnButtonChartClicked(object sender, EventArgs e)
+        async Task OnButtonChartClicked(object sender, EventArgs e)
         {
-            var newIntent = new Intent(this, typeof(ChartViewActivity));
-            StartActivity(newIntent);
+            // request user permisssion to connect to device
+            // NOTE: no request is shown to user if permission already granted
+            selectedPort = adapter.GetItem(0);
+            var permissionGranted = await usbManager.RequestPermissionAsync(selectedPort.Driver.Device, this);
+            if (permissionGranted)
+            {
+                // start the SerialConsoleActivity for this device
+                var intendChartView = new Intent(this, typeof(ChartViewActivity));
+                intendChartView.PutExtra(ChartViewActivity.EXTRA_TAG, new UsbSerialPortInfo(selectedPort));
+                StartActivity(intendChartView);
+            }
         }
 
         protected override void OnPause ()
@@ -111,9 +115,9 @@ namespace ESB
 			base.OnPause ();
 
 			// unregister the broadcast receivers
-			var temp = detachedReceiver; // copy reference for thread safety
-			if(temp != null)
-				UnregisterReceiver (temp);
+			// var temp = detachedReceiver; // copy reference for thread safety
+			// if(temp != null)
+				// UnregisterReceiver (temp);
 		}
 
 		protected override void OnDestroy ()
@@ -149,9 +153,9 @@ namespace ESB
 			var permissionGranted = await usbManager.RequestPermissionAsync(selectedPort.Driver.Device, this);
 			if(permissionGranted) {
 				// start the SerialConsoleActivity for this device
-				var newIntent = new Intent (this, typeof(LogViewActivity));
-				newIntent.PutExtra (LogViewActivity.EXTRA_TAG, new UsbSerialPortInfo(selectedPort));
-				StartActivity (newIntent);
+				var intendLogView = new Intent (this, typeof(LogViewActivity));
+                intendLogView.PutExtra (LogViewActivity.EXTRA_TAG, new UsbSerialPortInfo(selectedPort));
+				StartActivity (intendLogView);
 			}
 		}
 
@@ -234,6 +238,7 @@ namespace ESB
 
 		#endregion
 
+        /*
 		#region UsbDeviceDetachedReceiver implementation
 
 		class UsbDeviceDetachedReceiver
@@ -258,6 +263,7 @@ namespace ESB
 		}
 
 		#endregion
+        */
 	}
 }
 

@@ -40,11 +40,11 @@
         android:layout_centerHorizontal="true"
         android:background="#eeeeee" />
     <Button
-      android:text="Data View"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/separator2"
-      android:id="@+id/button1" />
+        android:text="Data View"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/separator2"
+        android:id="@+id/button1" />
     <View
         android:id="@+id/separator3"
         android:layout_width="match_parent"

@@ -1,23 +1,5 @@
 ﻿//
-// Copyright 2014 LusoVU. All rights reserved.
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 3 of the License, or (at your option) any later version.
-// 
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-// 
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
-// USA.
-// 
-// Project home page: https://bitbucket.com/lusovu/xamarinusbserial
-// 
+// Copyright (c) 2017 Equine Smart Bits, LLC. All rights reserved
 
 using System;
 using System.Collections.Generic;
@@ -42,16 +24,18 @@ namespace ESB
 	[Activity (Label = "@string/app_name", LaunchMode = LaunchMode.SingleTop)]			
 	class DataViewActivity : Activity
 	{
-		static readonly string TAG = typeof(LogViewActivity).Name;
+		static readonly string TAG = typeof(DataViewActivity).Name;
 
 		public const string EXTRA_TAG = "PortInfo";
 
 		IUsbSerialPort port;
 
 		UsbManager usbManager;
-		TextView titleTextView;
-		TextView dumpTextView;
-		ScrollView scrollView;
+		TextView hrTextView;
+		TextView spTextView;
+		TextView tempTextView;
+
+        string input_line;
 
 		SerialInputOutputManager serialIoManager;
 
@@ -61,12 +45,12 @@ namespace ESB
 
 			base.OnCreate (bundle);
 
-			SetContentView (Resource.Layout.LogView);
+			SetContentView (Resource.Layout.DataView);
 
 			usbManager = GetSystemService(Context.UsbService) as UsbManager;
-			titleTextView = FindViewById<TextView>(Resource.Id.demoTitle);
-			dumpTextView = FindViewById<TextView>(Resource.Id.consoleText);
-			scrollView = FindViewById<ScrollView>(Resource.Id.demoScroller);
+			hrTextView = FindViewById<TextView>(Resource.Id.hr);
+			spTextView = FindViewById<TextView>(Resource.Id.sp);
+			tempTextView = FindViewById<TextView>(Resource.Id.temp);
 		}
 
 		protected override void OnPause ()
@@ -92,7 +76,9 @@ namespace ESB
 
 			base.OnResume ();
 
-			var portInfo = Intent.GetParcelableExtra(EXTRA_TAG) as UsbSerialPortInfo;
+            input_line = "";
+
+            var portInfo = Intent.GetParcelableExtra(EXTRA_TAG) as UsbSerialPortInfo;
 			int vendorId = portInfo.VendorId;
 			int deviceId = portInfo.DeviceId;
 			int portNumber = portInfo.PortNumber;
@@ -106,12 +92,12 @@ namespace ESB
 
 			port = driver.Ports [portNumber];
 			if (port == null) {
-				titleTextView.Text = "No serial device.";
+				hrTextView.Text = "No serial device.";
 				return;
 			}
 			Log.Info (TAG, "port=" + port);
 
-			titleTextView.Text = "Serial device: " + port.GetType().Name;
+			hrTextView.Text = "Serial device: " + port.GetType().Name;
 
 			serialIoManager = new SerialInputOutputManager (port) {
 				BaudRate = 9600,
@@ -140,20 +126,41 @@ namespace ESB
                 Thread.Sleep(1000);
             }
 			catch (Java.IO.IOException e) {
-				titleTextView.Text = "Error opening device: " + e.Message;
+				hrTextView.Text = "Error opening device: " + e.Message;
 				return;
 			}
 		}
 
 		void UpdateReceivedData(byte[] data)
 		{
-			/*var message = "Read " + data.Length + " bytes: \n"
-				+ HexDump.DumpHexString (data) + "\n\n";
-            dumpTextView.Append(message);*/
             string result = System.Text.Encoding.UTF8.GetString(data);
 
-            dumpTextView.Append(result);
-			scrollView.SmoothScrollTo(0, dumpTextView.Bottom);		
+            input_line += result;
+
+            int count = result.Length;
+
+            if (!result.EndsWith("\n"))
+                return;
+
+            string line = input_line;
+
+            input_line = "";
+
+            int hr, sp;
+            double  temp;
+            bool    calculated;
+
+            ParseLog.GetData(line, out hr, out sp, out temp, out calculated);
+
+            if (temp > 0.0)
+            {
+                tempTextView.Text = "Temp = " + temp.ToString() + "F";
+            }
+            else if (calculated)
+            {
+                hrTextView.Text = "HR = " + hr.ToString() + " bpm";
+                spTextView.Text = "SP = " + sp.ToString() + "%";
+            }
 		}
 	}
 }
