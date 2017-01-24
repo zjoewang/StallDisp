@@ -31,20 +31,24 @@ namespace ESB
         public const string EXTRA_TAG = "PortInfo";
 
         private PlotView plotViewModel;
-        private LinearLayout mLLayoutModel;
         public PlotModel MyModel { get; set; }
 
         UsbManager usbManager;
         IUsbSerialPort port;
 
+        LineSeries seriesHR;
+        LineSeries seriesSP;
+
+        int curHR = -1;
+        int curSP = -1;
+        int curRawHR = -1;
+        int curRawSP = -1;
+        double curTemp = -1;
+        long curTS = 0;
+
         string input_line;
 
         SerialInputOutputManager serialIoManager;
-
-        private int[] modelAllocValues = new int[] { 12, 5, 2, 40, 40, 1 };
-        private string[] modelAllocations = new string[] { "Slice1", "Slice2", "Slice3", "Slice4", "Slice5", "Slice6" };
-        string[] colors = new string[] { "#7DA137", "#6EA6F3", "#999999", "#3B8DA5", "#F0BA22", "#EC8542" };
-        int total = 0;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -56,17 +60,20 @@ namespace ESB
             usbManager = GetSystemService(Context.UsbService) as UsbManager;
 
             plotViewModel = FindViewById<PlotView>(Resource.Id.plotViewModel);
-            mLLayoutModel = FindViewById<LinearLayout>(Resource.Id.linearLayoutModel);
 
             var plotModel1 = new PlotModel();
 
             plotModel1.PlotMargins = new OxyThickness(40, 40, 40, 40);
+            plotModel1.Background = OxyColors.LightSlateGray;
+
             var linearAxis1 = new LinearAxis();
             linearAxis1.MajorGridlineStyle = LineStyle.Solid;
             linearAxis1.MinorGridlineStyle = LineStyle.Dot;
             linearAxis1.Title = "HR";
             linearAxis1.Key = "HR";
             linearAxis1.Position = AxisPosition.Left;
+            linearAxis1.Minimum = 10.0;
+            linearAxis1.Maximum = 250.0;
             plotModel1.Axes.Add(linearAxis1);
             var linearAxis2 = new LinearAxis();
             linearAxis2.MajorGridlineStyle = LineStyle.Solid;
@@ -74,27 +81,38 @@ namespace ESB
             linearAxis2.Position = AxisPosition.Right;
             linearAxis2.Title = "%SpO2";
             linearAxis2.Key = "SP";
+            linearAxis2.Minimum = 50.0;
+            linearAxis2.Maximum = 100.0;
             plotModel1.Axes.Add(linearAxis2);
 
-            var seriesHR = new LineSeries()
+            seriesHR = new LineSeries()
             {
-                Color = OxyColors.SkyBlue,
+                Color = OxyColors.Magenta,
                 MarkerType = MarkerType.Circle,
-                MarkerSize = 6,
-                MarkerStroke = OxyColors.White,
-                MarkerFill = OxyColors.SkyBlue,
+                MarkerSize = 3,
+                MarkerStroke = OxyColors.Magenta,
+                MarkerFill = OxyColors.Magenta,
                 YAxisKey = "HR",
-                MarkerStrokeThickness = 1.5
+                MarkerStrokeThickness = 1.0
             };
 
-            seriesHR.Points.Add(new DataPoint(0, 10));
-            seriesHR.Points.Add(new DataPoint(10, 40));
-            seriesHR.Points.Add(new DataPoint(40, 20));
-            seriesHR.Points.Add(new DataPoint(60, 30));
             plotModel1.Series.Add(seriesHR);
 
             MyModel = plotModel1;
             plotViewModel.Model = MyModel;
+
+            seriesSP = new LineSeries()
+            {
+                Color = OxyColors.Yellow,
+                MarkerType = MarkerType.Circle,
+                MarkerSize = 3,
+                MarkerStroke = OxyColors.Yellow,
+                MarkerFill = OxyColors.Yellow,
+                YAxisKey = "SP",
+                MarkerStrokeThickness = 1.0
+            };
+
+            plotModel1.Series.Add(seriesSP);
         }
 
         protected override void OnPause()
@@ -140,12 +158,12 @@ namespace ESB
             port = driver.Ports[portNumber];
             if (port == null)
             {
-                // hrTextView.Text = "No serial device.";
+                MyModel.Title = "No serial device.";
                 return;
             }
             Log.Info(TAG, "port=" + port);
 
-            // hrTextView.Text = "Serial device: " + port.GetType().Name;
+            MyModel.Title = "Serial device: " + port.GetType().Name;
 
             serialIoManager = new SerialInputOutputManager(port)
             {
@@ -177,7 +195,7 @@ namespace ESB
             }
             catch (Java.IO.IOException e)
             {
-                // hrTextView.Text = "Error opening device: " + e.Message;
+                MyModel.Title = "Error opening device: " + e.Message;
                 return;
             }
         }
@@ -205,13 +223,26 @@ namespace ESB
 
             if (temp > 0.0)
             {
-                // tempTextView.Text = "Temp = " + temp.ToString() + "F";
+                curTemp = temp;
             }
             else if (calculated)
             {
-                // hrTextView.Text = "HR = " + hr.ToString() + " bpm";
-                // spTextView.Text = "SP = " + sp.ToString() + "%";
+                ++curTS;
+                curHR = hr;
+                curSP = sp;
+
+                seriesHR.Points.Add(new DataPoint(curTS, curHR));
+                seriesSP.Points.Add(new DataPoint(curTS, curSP));
             }
+            else
+            {
+                curRawHR = hr;
+                curRawSP = sp;
+            }
+
+            MyModel.Title = string.Format("HR = {0} bpm, SP = {1}%, T= {2}F\n(raw HR={3}, SP={4})",
+                    curHR, curSP, curTemp, curRawHR, curRawSP);
+            MyModel.InvalidatePlot(true);
         }
     }
 }

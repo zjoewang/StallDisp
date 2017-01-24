@@ -34,6 +34,8 @@ namespace ESB
 		TextView hrTextView;
 		TextView spTextView;
 		TextView tempTextView;
+		TextView rawhrTextView;
+		TextView rawspTextView;
 
         string input_line;
 
@@ -51,6 +53,8 @@ namespace ESB
 			hrTextView = FindViewById<TextView>(Resource.Id.hr);
 			spTextView = FindViewById<TextView>(Resource.Id.sp);
 			tempTextView = FindViewById<TextView>(Resource.Id.temp);
+			rawhrTextView = FindViewById<TextView>(Resource.Id.rawhr);
+			rawspTextView = FindViewById<TextView>(Resource.Id.rawsp);
 		}
 
 		protected override void OnPause ()
@@ -92,12 +96,12 @@ namespace ESB
 
 			port = driver.Ports [portNumber];
 			if (port == null) {
-				hrTextView.Text = "No serial device.";
+				tempTextView.Text = "No serial device.";
 				return;
 			}
 			Log.Info (TAG, "port=" + port);
 
-			hrTextView.Text = "Serial device: " + port.GetType().Name;
+			tempTextView.Text = "Serial device: " + port.GetType().Name;
 
 			serialIoManager = new SerialInputOutputManager (port) {
 				BaudRate = 9600,
@@ -126,7 +130,7 @@ namespace ESB
                 Thread.Sleep(1000);
             }
 			catch (Java.IO.IOException e) {
-				hrTextView.Text = "Error opening device: " + e.Message;
+				tempTextView.Text = "Error opening device: " + e.Message;
 				return;
 			}
 		}
@@ -160,6 +164,11 @@ namespace ESB
             {
                 hrTextView.Text = "HR = " + hr.ToString() + " bpm";
                 spTextView.Text = "SP = " + sp.ToString() + "%";
+            }
+            else
+            {
+                rawhrTextView.Text = "raw HR = " + hr.ToString() + " bpm";
+                rawspTextView.Text = "raw SP = " + sp.ToString() + "%";
             }
 		}
 	}

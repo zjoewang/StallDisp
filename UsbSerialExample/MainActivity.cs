@@ -29,6 +29,8 @@ namespace ESB
 		static readonly string TAG = typeof(MainActivity).Name;
 		const string ACTION_USB_PERMISSION = "com.hoho.android.usbserial.examples.USB_PERMISSION";
 
+        string build_number = "0.808";
+
 		UsbManager usbManager;
 		ListView listView;
 		TextView progressBarTitle;
@@ -45,6 +47,8 @@ namespace ESB
 			base.OnCreate (bundle);
 
 			SetContentView (Resource.Layout.Main);
+
+            this.Title += " (ver " + build_number + ")";
 
 			usbManager = GetSystemService(Context.UsbService) as UsbManager;
 			listView = FindViewById<ListView>(Resource.Id.deviceList);

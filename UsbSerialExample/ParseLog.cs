@@ -35,7 +35,7 @@ namespace ESB
             }
 
             // Raw: TS=%d, HR=%d (valid=%d), SpO=%d (valid=%d)
-            Regex rgx2 = new Regex(@"Raw TS=(\d+), HR=(\d+) \(valid=(\d)\), SP=(\d+) \(valid=(\d)\)");
+            Regex rgx2 = new Regex(@"Raw TS=(-?\d+), HR=(\d+) \(valid=(\d)\), SP=(\d+) \(valid=(\d)\)");
 
             matches = rgx2.Matches(line);
 
