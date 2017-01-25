@@ -64,7 +64,11 @@ namespace ESB
             var plotModel1 = new PlotModel();
 
             plotModel1.PlotMargins = new OxyThickness(40, 40, 40, 40);
-            plotModel1.Background = OxyColors.LightSlateGray;
+            plotModel1.Background = OxyColors.Black;
+            plotModel1.TitleFontSize = 40;
+            plotModel1.TitleColor = OxyColors.Green;
+            plotModel1.SubtitleFontSize = 24;
+            plotModel1.TextColor = OxyColors.White;
 
             var linearAxis1 = new LinearAxis();
             linearAxis1.MajorGridlineStyle = LineStyle.Solid;
@@ -94,7 +98,8 @@ namespace ESB
                 MarkerStroke = OxyColors.Magenta,
                 MarkerFill = OxyColors.Magenta,
                 YAxisKey = "HR",
-                MarkerStrokeThickness = 1.0
+                MarkerStrokeThickness = 1.0,
+                StrokeThickness = 5
             };
 
             plotModel1.Series.Add(seriesHR);
@@ -111,7 +116,8 @@ namespace ESB
                 MarkerStroke = OxyColors.Yellow,
                 MarkerFill = OxyColors.Yellow,
                 YAxisKey = "SP",
-                MarkerStrokeThickness = 1.0
+                MarkerStrokeThickness = 1.0,
+                StrokeThickness = 5
             };
 
             plotModel1.Series.Add(seriesSP);
@@ -249,8 +255,8 @@ namespace ESB
                 seriesSP.Points.RemoveRange(0, 50);
             }
 
-            MyModel.Title = string.Format("HR = {0} bpm, SP = {1}%, T= {2}F\n(raw HR={3}, SP={4})",
-                    curHR, curSP, curTemp, curRawHR, curRawSP);
+            MyModel.Title = string.Format("HR = {0} bpm, SP = {1}%", curHR, curSP);
+            MyModel.Subtitle= string.Format("T= {0}F, raw HR={1}, SP={2}", curTemp, curRawHR, curRawSP);
             MyModel.InvalidatePlot(true);
         }
     }

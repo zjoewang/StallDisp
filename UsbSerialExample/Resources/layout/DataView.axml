@@ -8,7 +8,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:text="HR: "
-        android:textSize="36sp"
+        android:textColor="#FF00FF"
+        android:textSize="48sp"
         android:textStyle="bold" />
     <View
         android:id="@+id/separator1"
@@ -23,7 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/separator1"
         android:text="SpO2: "
-        android:textSize="36sp"
+        android:textColor="#FFFF00"
+        android:textSize="48sp"
         android:textStyle="bold" />
     <View
         android:id="@+id/separator2"
