@@ -85,8 +85,9 @@ namespace ESB
             linearAxis2.Maximum = 100.0;
             plotModel1.Axes.Add(linearAxis2);
 
-            seriesHR = new LineSeries()
+            seriesHR = new LineSeries
             {
+                Title = "Heart Rate (bpm)",
                 Color = OxyColors.Magenta,
                 MarkerType = MarkerType.Circle,
                 MarkerSize = 3,
@@ -103,6 +104,7 @@ namespace ESB
 
             seriesSP = new LineSeries()
             {
+                Title = "Oxygen Saturation Level (%)",
                 Color = OxyColors.Yellow,
                 MarkerType = MarkerType.Circle,
                 MarkerSize = 3,
@@ -238,6 +240,13 @@ namespace ESB
             {
                 curRawHR = hr;
                 curRawSP = sp;
+            }
+
+            // Thnning data so we don't accumulate too much historical data
+            if (seriesHR.Points.Count > 200)
+            {
+                seriesHR.Points.RemoveRange(0, 50);
+                seriesSP.Points.RemoveRange(0, 50);
             }
 
             MyModel.Title = string.Format("HR = {0} bpm, SP = {1}%, T= {2}F\n(raw HR={3}, SP={4})",
