@@ -27,6 +27,7 @@ namespace ESB
     public class ChartViewActivity : Activity
     {
         static readonly string TAG = typeof(ChartViewActivity).Name;
+        WriteLog m_wl;
 
         public const string EXTRA_TAG = "PortInfo";
 
@@ -53,6 +54,8 @@ namespace ESB
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+
+            m_wl = new WriteLog();
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.ChartView);
@@ -218,6 +221,8 @@ namespace ESB
 
             if (!result.EndsWith("\n"))
                 return;
+            else
+                m_wl.Write(input_line);
 
             string line = input_line;
 

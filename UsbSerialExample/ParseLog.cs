@@ -4,6 +4,7 @@
 using System;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using System.IO;
 
 namespace ESB
 {
@@ -72,4 +73,58 @@ namespace ESB
         }
     };
 
+    public class WriteLog
+    {
+        private static StreamWriter s_sr = null;
+
+        public WriteLog() { Init();  }
+
+        ~WriteLog() { Close();  }
+
+        public static bool Init()
+        {
+            if (s_sr == null)
+                return true;
+
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string filename = Path.Combine(path, "myfile.txt");
+
+            try
+            {
+                s_sr = new StreamWriter(filename, true);
+            }
+            catch (Exception e)
+            {
+                s_sr = null;
+                return false;
+            }
+
+            return true;
+        }
+
+        public static void Close()
+        {
+            if (s_sr != null)
+            {
+                s_sr.Close();
+                s_sr = null;
+            }
+        }
+
+        public void Write(string str)
+        {
+            if (s_sr != null)
+            {
+                s_sr.Write(str);
+            }
+        }
+
+        public void WriteLn(string str)
+        {
+            if (s_sr != null)
+            {
+                s_sr.WriteLine(str);
+            }
+        }
+    }
 }
