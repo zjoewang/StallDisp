@@ -130,6 +130,8 @@ namespace ESB
         {
             Log.Info(TAG, "OnPause");
 
+            WriteLog.Close();
+
             base.OnPause();
 
             if (serialIoManager != null && serialIoManager.IsOpen)

@@ -1,9 +1,8 @@
 ﻿//
 // Copyright (c) 2017 Equine Smart Bits, LLC. All rights reserved
 
-using System;
 using System.Text.RegularExpressions;
-using System.Diagnostics;
+using Android.OS;
 using System.IO;
 
 namespace ESB
@@ -29,9 +28,9 @@ namespace ESB
             {
                 GroupCollection data = matches[0].Groups;
 
-                Debug.Assert(data.Count == 2);
+                System.Diagnostics.Debug.Assert(data.Count == 2);
 
-                temp = Convert.ToDouble(data[1].Value);
+                temp = System.Convert.ToDouble(data[1].Value);
                 return;
             }
 
@@ -44,13 +43,13 @@ namespace ESB
             {
                 GroupCollection data = matches[0].Groups;
 
-                Debug.Assert(data.Count == 6);
+                System.Diagnostics.Debug.Assert(data.Count == 6);
 
-                long ts = Convert.ToInt64(data[1].Value);
-                hr = Convert.ToInt32(data[2].Value);
-                int hr_valid = Convert.ToInt32(data[3].Value);
-                sp = Convert.ToInt32(data[4].Value);
-                int sp_valid = Convert.ToInt32(data[5].Value);
+                long ts = System.Convert.ToInt64(data[1].Value);
+                hr = System.Convert.ToInt32(data[2].Value);
+                int hr_valid = System.Convert.ToInt32(data[3].Value);
+                sp = System.Convert.ToInt32(data[4].Value);
+                int sp_valid = System.Convert.ToInt32(data[5].Value);
                 return;
             }
 
@@ -63,10 +62,10 @@ namespace ESB
             {
                 GroupCollection data = matches[0].Groups;
 
-                Debug.Assert(data.Count == 3);
+                System.Diagnostics.Debug.Assert(data.Count == 3);
 
-                hr = Convert.ToInt32(data[1].Value);
-                sp = Convert.ToInt32(data[2].Value);
+                hr = System.Convert.ToInt32(data[1].Value);
+                sp = System.Convert.ToInt32(data[2].Value);
                 calculated = true;
                 return;
             }
@@ -75,25 +74,30 @@ namespace ESB
 
     public class WriteLog
     {
-        private static StreamWriter s_sr = null;
+        private static System.IO.StreamWriter s_sr = null;
 
-        public WriteLog() { Init();  }
+        public WriteLog() { Init(); }
 
-        ~WriteLog() { Close();  }
+        ~WriteLog() { Close(); }
 
         public static bool Init()
         {
             if (s_sr != null)
                 return true;
 
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string filename = Path.Combine(path, "esblog.txt");
+            string path = Environment.GetExternalStoragePublicDirectory(Environment.DirectoryDownloads).AbsolutePath;
+
+            System.DateTime dt = System.DateTime.Now;
+
+            string ymhms = dt.ToString("MMddHHmmss");
+
+            string filename = Path.Combine(path, "esblog" + ymhms + ".txt");
 
             try
             {
                 s_sr = new StreamWriter(filename, true);
             }
-            catch (Exception e)
+            catch (System.Exception e)
             {
                 s_sr = null;
                 return false;
