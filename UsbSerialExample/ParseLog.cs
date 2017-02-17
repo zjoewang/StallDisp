@@ -83,11 +83,11 @@ namespace ESB
 
         public static bool Init()
         {
-            if (s_sr == null)
+            if (s_sr != null)
                 return true;
 
             string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string filename = Path.Combine(path, "myfile.txt");
+            string filename = Path.Combine(path, "esblog.txt");
 
             try
             {
