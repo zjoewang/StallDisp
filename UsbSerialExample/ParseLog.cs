@@ -9,20 +9,40 @@ namespace ESB
 {
     public class ParseLog
     {
-        public static void GetData(string line_input, out int hr, out int sp, out double temp, out bool calculated)
+        public static void GetData(string line_input, out int hr, out int sp, out double temp, out bool calculated,
+                                   out long time, out int red, out int ir)
         {
             hr = sp = -1;
             temp = -1.0;
             calculated = false;
+            time = -1;
+            red = ir = -1;
 
             string line = line_input.Trim();
 
             if (line.Length == 0)
                 return;
 
+            // time=nnn, red=nnn, ir=nnn
+            Regex rgx0 = new Regex(@"time=(-?\d+), red=(\d+), ir=(\d+)");
+            MatchCollection matches = rgx0.Matches(line);
+
+            if (matches.Count == 1)
+            {
+                GroupCollection data = matches[0].Groups;
+
+                System.Diagnostics.Debug.Assert(data.Count == 4);
+
+                time = System.Convert.ToInt64(data[1].Value);
+                red = System.Convert.ToInt32(data[2].Value);
+                ir = System.Convert.ToInt32(data[3].Value);
+                return;
+            }
+
+
             // T=%.1fF
             Regex rgx1 = new Regex(@"T=(.*)F");
-            MatchCollection matches = rgx1.Matches(line);
+            matches = rgx1.Matches(line);
 
             if (matches.Count == 1)
             {
@@ -45,7 +65,7 @@ namespace ESB
 
                 System.Diagnostics.Debug.Assert(data.Count == 6);
 
-                long ts = System.Convert.ToInt64(data[1].Value);
+                time = System.Convert.ToInt64(data[1].Value);
                 hr = System.Convert.ToInt32(data[2].Value);
                 int hr_valid = System.Convert.ToInt32(data[3].Value);
                 sp = System.Convert.ToInt32(data[4].Value);

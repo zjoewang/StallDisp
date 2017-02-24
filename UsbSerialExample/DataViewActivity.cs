@@ -153,10 +153,17 @@ namespace ESB
             int hr, sp;
             double  temp;
             bool    calculated;
+            long time;
+            int red, ir;
 
-            ParseLog.GetData(line, out hr, out sp, out temp, out calculated);
+            ParseLog.GetData(line, out hr, out sp, out temp, out calculated, out time, out red, out ir);
 
-            if (temp > 0.0)
+            if (red > 0 || ir > 0)
+            {
+                // Do nothing
+                ;
+            }
+            else if (temp > 0.0)
             {
                 tempTextView.Text = "Temp = " + temp.ToString() + "F";
             }
