@@ -29,7 +29,7 @@ namespace ESB
 		static readonly string TAG = typeof(MainActivity).Name;
 		const string ACTION_USB_PERMISSION = "com.hoho.android.usbserial.examples.USB_PERMISSION";
 
-        string build_number = "0.815";
+        string build_number = "0.817";
 
 		UsbManager usbManager;
 		ListView listView;
